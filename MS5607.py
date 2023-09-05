@@ -28,23 +28,21 @@ class MS5607:
         self._coefficients = self.readCoefficients()
 
     # Some utility methods
-    def read16U(self, register):
-        self._bus.writeto(self.DEVICE_ADDRESS, register.to_bytes(1, "big"))
-        bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 2)
-        return (bytes[0] << 8) + (bytes[1])
-
     def readADC(self):
         self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_ADC_READ.to_bytes(1, "big"))
         bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 3)
         return (bytes[0] << 16) + (bytes[1] << 8) + bytes[2]
 
+    def readCoefficient(self, i):
+        cmd = (self._CMD_PROM_RD + (i << 1)).to_bytes(1, "big")
+        self._bus.writeto(self.DEVICE_ADDRESS, cmd)
+        bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 2)
+        return (bytes[0] << 8) + (bytes[1])
+
     # Commands
     def resetSensor(self):
         self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
         sleep_us(3000)  # wait for the reset sequence timing
-
-    def readCoefficient(self, i):
-        return self.read16U(self._CMD_PROM_RD + (i << 1))
 
     def readCoefficients(self):
         coefficients = [0] * 8
