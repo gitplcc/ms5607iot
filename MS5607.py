@@ -39,6 +39,10 @@ class MS5607:
         bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 2)
         return (bytes[0] << 8) + (bytes[1])
 
+    def _resetSensor(self):
+        self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
+        time.sleep_us(3000)  # wait for the reset sequence timing
+
     def _takeSample(self, cmd):
         # set conversion mode
         self._bus.writeto(
@@ -55,10 +59,6 @@ class MS5607:
         return self._readADC()
 
     # Commands
-    def resetSensor(self):
-        self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
-        time.sleep_us(3000)  # wait for the reset sequence timing
-
     def readCoefficients(self):
         coefficients = [0] * 8
         for i in range(8):
@@ -66,7 +66,7 @@ class MS5607:
         return coefficients
 
     def start(self):
-        self.resetSensor()
+        self._resetSensor()
         self._coefficients = self.readCoefficients()
 
     def getRawPressure(self):
