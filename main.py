@@ -11,7 +11,7 @@ CLIENT_ID = ubinascii.hexlify(machine.unique_id())
 
 
 def InitializeSensor():
-    bus = machine.I2C(1, scl=machine.Pin(22), sda=machine.Pin(21), freq=400000)
+    bus = machine.I2C(1, scl=machine.Pin(22), sda=machine.Pin(21), freq=400_000)
     sensor = MS5607.MS5607(bus)
     sensor.start()
     return sensor
