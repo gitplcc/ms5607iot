@@ -65,7 +65,7 @@ class MS5607:
             coefficients[i] = self._readCoefficient(i)
         return coefficients
 
-    def start():
+    def start(self):
         self.resetSensor()
         self._coefficients = self.readCoefficients()
 
