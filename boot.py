@@ -2,7 +2,7 @@ import app_cfg
 
 import network
 import ntptime
-from time import sleep_ms
+import time
 
 
 def connect2wifi():
@@ -12,7 +12,7 @@ def connect2wifi():
     while keep_on:
         wlan.active(True)
         while not wlan.active():
-            sleep_ms(100)
+            time.sleep_ms(100)
         nets = sorted(wlan.scan(), key=lambda net: net[3], reverse=True)
         ssids = [i[0] for i in nets]
         if any((ssid := net) in ssids for net in app_cfg.WIFI_TOKENS.keys()):
@@ -20,13 +20,13 @@ def connect2wifi():
             wlan.config(reconnects=3)
             wlan.connect(ssid, app_cfg.WIFI_TOKENS[ssid])
             while wlan.status() == network.STAT_CONNECTING:
-                sleep_ms(100)
+                time.sleep_ms(100)
             if wlan.isconnected():
                 return wlan
 
         if keep_on:
             wlan.active(False)
-            sleep_ms(10000)
+            time.sleep_ms(10_000)
 
     return None
 

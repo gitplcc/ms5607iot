@@ -1,4 +1,4 @@
-from time import sleep_us
+import time
 
 
 class MS5607:
@@ -52,13 +52,13 @@ class MS5607:
             self.OVSF_2048: 6_000,
             self.OVSF_4096: 10_000,
         }
-        sleep_us(sleepTime[self.oversampling])
+        time.sleep_us(sleepTime[self.oversampling])
         return self._readADC()
 
     # Commands
     def resetSensor(self):
         self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
-        sleep_us(3000)  # wait for the reset sequence timing
+        time.sleep_us(3000)  # wait for the reset sequence timing
 
     def readCoefficients(self):
         coefficients = [0] * 8
