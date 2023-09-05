@@ -47,10 +47,10 @@ class MS5607:
         )
         sleepTime = {
             self.OVSF_256: 900,
-            self.OVSF_512: 3000,
-            self.OVSF_1024: 4000,
-            self.OVSF_2048: 6000,
-            self.OVSF_4096: 10000,
+            self.OVSF_512: 3_000,
+            self.OVSF_1024: 4_000,
+            self.OVSF_2048: 6_000,
+            self.OVSF_4096: 10_000,
         }
         sleep_us(sleepTime[self.oversampling])
         return self._readADC()
