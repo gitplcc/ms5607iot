@@ -8,7 +8,6 @@ import time
 import ubinascii
 
 CLIENT_ID = ubinascii.hexlify(machine.unique_id())
-TOPIC = b"Chalet Morales/ms5607"
 
 
 def InitializeSensor():
@@ -38,5 +37,5 @@ while True:
     rawp = sensor.getRawPressure()
     rawt = sensor.getRawTemperature()
     msg = f'{{"P": {sensor.toPascals(rawp,rawt)}, "T": {sensor.toCelsiusHundreths(rawt)}}}'
-    client.publish(TOPIC, msg.encode("ascii"))
+    client.publish(app_cfg.MQTT_TOPIC, msg.encode("ascii"))
     time.sleep_ms(60_000)
