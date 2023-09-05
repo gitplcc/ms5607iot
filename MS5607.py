@@ -1,5 +1,6 @@
 from time import sleep_us
 
+
 class MS5607:
     """
     http://www.parallaxinc.com/sites/default/files/downloads/29124-APPNote_520_C_code.pdf
@@ -72,31 +73,31 @@ class MS5607:
         return self._takeSample(self._CMD_ADC_D2)
 
     def toCelsiusHundreths(self, rawT):
-        dT = rawT-(self._coefficients[5] << 8)
-        temp = 2000+(dT*self._coefficients[6] >> 23)
+        dT = rawT - (self._coefficients[5] << 8)
+        temp = 2000 + (dT * self._coefficients[6] >> 23)
         if self.highPrecission and temp < 2000:
-            t2 = dT*dT >> 31
-            temp = temp-t2
+            t2 = dT * dT >> 31
+            temp = temp - t2
         return temp
 
     def toPascals(self, rawP, rawT):
         # Calculate 1st order pressure and temperature
-        dT = rawT-(self._coefficients[5] << 8)
+        dT = rawT - (self._coefficients[5] << 8)
         # Offset at actual temperature
-        off = (self._coefficients[2] << 17)+(self._coefficients[4]*dT >> 6)
+        off = (self._coefficients[2] << 17) + (self._coefficients[4] * dT >> 6)
         # Sensitivity at actual temperature
-        sens = (self._coefficients[1] << 16)+(self._coefficients[3]*dT >> 7)
+        sens = (self._coefficients[1] << 16) + (self._coefficients[3] * dT >> 7)
         if self.highPrecission:
-            temp = 2000+(dT*self._coefficients[6] >> 23)
+            temp = 2000 + (dT * self._coefficients[6] >> 23)
             if temp < 2000:
-                dT2 = (temp-2000)**2
-                off2 = 61*dT2 >> 4
+                dT2 = (temp - 2000) ** 2
+                off2 = 61 * dT2 >> 4
                 sens2 = dT2 << 1
                 if temp < -1500:
-                    dT2 = (temp+1500)**2
-                    off2 = off2+15*dT2
-                    sens2 = sens2+dT2 << 3
-                off = off-off2
-                sens = sens-sens2
+                    dT2 = (temp + 1500) ** 2
+                    off2 = off2 + 15 * dT2
+                    sens2 = sens2 + dT2 << 3
+                off = off - off2
+                sens = sens - sens2
         # Temperature compensated pressure
-        return (rawP*sens >> 21)-off >> 15
+        return (rawP * sens >> 21) - off >> 15

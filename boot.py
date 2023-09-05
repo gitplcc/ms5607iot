@@ -4,6 +4,7 @@ import network
 import ntptime
 from time import sleep_ms
 
+
 def connect2wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(False)
@@ -28,6 +29,7 @@ def connect2wifi():
             sleep_ms(10000)
 
     return None
+
 
 wlan = connect2wifi()
 ntptime.settime()
