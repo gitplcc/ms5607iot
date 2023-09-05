@@ -25,8 +25,7 @@ class MS5607:
         self._bus = bus
         self.highPrecission = False
         self.oversampling = self.OVSF_4096
-        self.resetSensor()
-        self._coefficients = self.readCoefficients()
+        self._coefficients = [None] * 8
 
     # Some utility methods
     def _readADC(self):
@@ -65,6 +64,10 @@ class MS5607:
         for i in range(8):
             coefficients[i] = self._readCoefficient(i)
         return coefficients
+
+    def start():
+        self.resetSensor()
+        self._coefficients = self.readCoefficients()
 
     def getRawPressure(self):
         return self._takeSample(self._CMD_ADC_D1)

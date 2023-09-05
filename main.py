@@ -13,7 +13,9 @@ TOPIC = b"Chalet Morales/ms5607"
 
 def InitializeSensor():
     bus = machine.I2C(1, scl=machine.Pin(22), sda=machine.Pin(21), freq=400000)
-    return MS5607.MS5607(bus)
+    sensor = MS5607.MS5607(bus)
+    sensor.start()
+    return sensor
 
 
 def Connect2MQTTBroker():
