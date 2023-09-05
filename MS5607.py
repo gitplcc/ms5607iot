@@ -21,10 +21,10 @@ class MS5607:
     _CMD_ADC_READ = 0x00
     _CMD_PROM_RD = 0xA0
 
-    def __init__(self, bus):
+    def __init__(self, bus, highPrecission=True, oversampling=OVSF_4096):
         self._bus = bus
-        self.highPrecission = False
-        self.oversampling = self.OVSF_4096
+        self.highPrecission = highPrecission
+        self.oversampling = oversampling
         self._coefficients = [None] * 8
 
     # Some utility methods
