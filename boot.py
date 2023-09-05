@@ -16,7 +16,6 @@ def connect2wifi():
         nets = sorted(wlan.scan(), key=lambda net: net[3], reverse=True)
         ssids = [i[0] for i in nets]
         if any((ssid := net) in ssids for net in app_cfg.WIFI_TOKENS.keys()):
-            print(ssid, app_cfg.WIFI_TOKENS[ssid])
             wlan.config(reconnects=3)
             wlan.connect(ssid, app_cfg.WIFI_TOKENS[ssid])
             while wlan.status() == network.STAT_CONNECTING:
