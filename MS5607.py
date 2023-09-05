@@ -28,29 +28,18 @@ class MS5607:
         self._coefficients = self.readCoefficients()
 
     # Some utility methods
-    def readADC(self):
+    def _readADC(self):
         self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_ADC_READ.to_bytes(1, "big"))
         bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 3)
         return (bytes[0] << 16) + (bytes[1] << 8) + bytes[2]
 
-    def readCoefficient(self, i):
+    def _readCoefficient(self, i):
         cmd = (self._CMD_PROM_RD + (i << 1)).to_bytes(1, "big")
         self._bus.writeto(self.DEVICE_ADDRESS, cmd)
         bytes = self._bus.readfrom(self.DEVICE_ADDRESS, 2)
         return (bytes[0] << 8) + (bytes[1])
 
-    # Commands
-    def resetSensor(self):
-        self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
-        sleep_us(3000)  # wait for the reset sequence timing
-
-    def readCoefficients(self):
-        coefficients = [0] * 8
-        for i in range(8):
-            coefficients[i] = self.readCoefficient(i)
-        return coefficients
-
-    def takeSample(self, cmd):
+    def _takeSample(self, cmd):
         # set conversion mode
         self._bus.writeto(
             self.DEVICE_ADDRESS, (cmd | self.oversampling).to_bytes(1, "big")
@@ -63,13 +52,24 @@ class MS5607:
             self.OVSF_4096: 10000,
         }
         sleep_us(sleepTime[self.oversampling])
-        return self.readADC()
+        return self._readADC()
+
+    # Commands
+    def resetSensor(self):
+        self._bus.writeto(self.DEVICE_ADDRESS, self._CMD_RESET.to_bytes(1, "big"))
+        sleep_us(3000)  # wait for the reset sequence timing
+
+    def readCoefficients(self):
+        coefficients = [0] * 8
+        for i in range(8):
+            coefficients[i] = self._readCoefficient(i)
+        return coefficients
 
     def getRawPressure(self):
-        return self.takeSample(self._CMD_ADC_D1)
+        return self._takeSample(self._CMD_ADC_D1)
 
     def getRawTemperature(self):
-        return self.takeSample(self._CMD_ADC_D2)
+        return self._takeSample(self._CMD_ADC_D2)
 
     def toCelsiusHundreths(self, rawT):
         dT = rawT-(self._coefficients[5] << 8)
